@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
-data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String)
+data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String, val network: String, val dataState: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +56,15 @@ fun SimInspectorScreen() {
                     carrier = info.carrierName?.toString()?.takeIf { it.isNotBlank() } ?: perSim.networkOperatorName?.takeIf { it.isNotBlank() } ?: "Operadora indisponível",
                     number = phoneNumber,
                     country = info.countryIso?.uppercase() ?: "—",
-                    state = if (perSim.simState == TelephonyManager.SIM_STATE_READY) "Pronto" else "Estado: ${perSim.simState}"
+                    state = if (perSim.simState == TelephonyManager.SIM_STATE_READY) "Pronto" else "Estado: ${perSim.simState}",
+                    network = runCatching { TelephonyManager.getNetworkTypeName(perSim.dataNetworkType) }.getOrDefault("Indisponível"),
+                    dataState = when (perSim.dataState) {
+                        TelephonyManager.DATA_CONNECTED -> "Conectado"
+                        TelephonyManager.DATA_CONNECTING -> "Conectando"
+                        TelephonyManager.DATA_DISCONNECTED -> "Desconectado"
+                        TelephonyManager.DATA_SUSPENDED -> "Suspenso"
+                        else -> "Indisponível"
+                    }
                 )
             }
             message = if (cards.isEmpty()) "Nenhum chip ativo foi identificado. Verifique se o SIM está inserido e habilitado." else "${cards.size} chip(s) ativo(s) encontrado(s)."
@@ -106,6 +114,8 @@ fun SimInspectorScreen() {
                                 InfoLine("Número", sim.number)
                                 InfoLine("País", sim.country)
                                 InfoLine("Estado do SIM", sim.state)
+                                InfoLine("Tecnologia de rede", sim.network)
+                                InfoLine("Dados móveis", sim.dataState)
                             }
                         }
                     }
