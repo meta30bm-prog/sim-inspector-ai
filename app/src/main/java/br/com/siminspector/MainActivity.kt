@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
-data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String, val network: String, val dataState: String)
+data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String, val operatorCode: String, val network: String, val dataState: String, val roaming: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +56,19 @@ fun SimInspectorScreen() {
                     carrier = info.carrierName?.toString()?.takeIf { it.isNotBlank() } ?: perSim.networkOperatorName?.takeIf { it.isNotBlank() } ?: "Operadora indisponível",
                     number = phoneNumber,
                     country = info.countryIso?.uppercase() ?: "—",
-                    state = if (perSim.simState == TelephonyManager.SIM_STATE_READY) "Pronto" else "Estado: ${perSim.simState}",
+                    state = when (perSim.simState) {
+                        TelephonyManager.SIM_STATE_READY -> "Pronto"
+                        TelephonyManager.SIM_STATE_ABSENT -> "Sem chip"
+                        TelephonyManager.SIM_STATE_PIN_REQUIRED -> "PIN necessário"
+                        TelephonyManager.SIM_STATE_PUK_REQUIRED -> "PUK necessário"
+                        TelephonyManager.SIM_STATE_NETWORK_LOCKED -> "Bloqueado pela rede"
+                        TelephonyManager.SIM_STATE_NOT_READY -> "Não pronto"
+                        TelephonyManager.SIM_STATE_PERM_DISABLED -> "Desativado permanentemente"
+                        TelephonyManager.SIM_STATE_CARD_IO_ERROR -> "Erro de leitura do chip"
+                        TelephonyManager.SIM_STATE_CARD_RESTRICTED -> "Chip com restrições"
+                        else -> "Desconhecido"
+                    },
+                    operatorCode = perSim.networkOperator?.takeIf { it.isNotBlank() } ?: "Não fornecido",
                     network = runCatching { TelephonyManager.getNetworkTypeName(perSim.dataNetworkType) }.getOrDefault("Indisponível"),
                     dataState = when (perSim.dataState) {
                         TelephonyManager.DATA_CONNECTED -> "Conectado"
@@ -64,7 +76,8 @@ fun SimInspectorScreen() {
                         TelephonyManager.DATA_DISCONNECTED -> "Desconectado"
                         TelephonyManager.DATA_SUSPENDED -> "Suspenso"
                         else -> "Indisponível"
-                    }
+                    },
+                    roaming = if (runCatching { perSim.isNetworkRoaming }.getOrDefault(false)) "Sim" else "Não"
                 )
             }
             message = if (cards.isEmpty()) "Nenhum chip ativo foi identificado. Verifique se o SIM está inserido e habilitado." else "${cards.size} chip(s) ativo(s) encontrado(s)."
@@ -114,8 +127,10 @@ fun SimInspectorScreen() {
                                 InfoLine("Número", sim.number)
                                 InfoLine("País", sim.country)
                                 InfoLine("Estado do SIM", sim.state)
+                                InfoLine("Código da operadora (MCC/MNC)", sim.operatorCode)
                                 InfoLine("Tecnologia de rede", sim.network)
                                 InfoLine("Dados móveis", sim.dataState)
+                                InfoLine("Em roaming", sim.roaming)
                             }
                         }
                     }
