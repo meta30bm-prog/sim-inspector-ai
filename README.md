@@ -10,10 +10,11 @@ Aplicativo Android para consultar informações de cartões SIM que o próprio A
 - Código da operadora (MCC/MNC), quando disponível.
 - Tecnologia de rede móvel e estado da conexão de dados.
 - Indicação de roaming.
+- Estimativa de qualidade do sinal (instantâneo, quando suportado pelo Android).
 - Interface em português e solicitação de permissões em tempo de execução.
 
 ## Privacidade e limitações
-O Android restringe o acesso a dados sensíveis de telefonia. O número pode não estar gravado no SIM ou ser ocultado pela operadora. O ICCID não é disponibilizado a aplicativos comuns em muitas versões do Android; esta versão não tenta contornar essas restrições. Não há garantia de leitura do número, ICCID ou outros identificadores em todos os aparelhos. As informações de rede dependem do modem, da operadora, do sinal e das permissões concedidas.
+O Android restringe o acesso a dados sensíveis de telefonia. O número pode não estar gravado no SIM ou ser ocultado pela operadora. O ICCID não é disponibilizado a aplicativos comuns em muitas versões do Android; esta versão não tenta contornar essas restrições. Não há garantia de leitura do número, ICCID ou outros identificadores em todos os aparelhos. As informações de rede dependem do modem, da operadora, do sinal e das permissões concedidas. A qualidade do sinal é uma leitura pontual e pode variar rapidamente; não substitui medições técnicas de RF.
 
 O aplicativo não coleta nem envia dados para servidores. As consultas são feitas localmente usando as APIs oficiais do Android.
 
