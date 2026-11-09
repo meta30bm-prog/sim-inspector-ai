@@ -2,6 +2,7 @@ package br.com.siminspector
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
@@ -21,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
-data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String, val operatorCode: String, val network: String, val dataState: String, val roaming: String)
+data class SimCardInfo(val slot: String, val carrier: String, val number: String, val country: String, val state: String, val operatorCode: String, val network: String, val dataState: String, val roaming: String, val signal: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +78,20 @@ fun SimInspectorScreen() {
                         TelephonyManager.DATA_SUSPENDED -> "Suspenso"
                         else -> "Indisponível"
                     },
-                    roaming = if (runCatching { perSim.isNetworkRoaming }.getOrDefault(false)) "Sim" else "Não"
+                    roaming = if (runCatching { perSim.isNetworkRoaming }.getOrDefault(false)) "Sim" else "Não",
+                    signal = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        runCatching {
+                            perSim.signalStrength?.let { strength ->
+                                when (strength.level) {
+                                    0 -> "Muito fraco ou desconhecido"
+                                    1 -> "Fraco"
+                                    2 -> "Moderado"
+                                    3 -> "Bom"
+                                    else -> "Excelente"
+                                }
+                            } ?: "Indisponível"
+                        }.getOrDefault("Indisponível")
+                    } else "Não disponível nesta versão do Android"
                 )
             }
             message = if (cards.isEmpty()) "Nenhum chip ativo foi identificado. Verifique se o SIM está inserido e habilitado." else "${cards.size} chip(s) ativo(s) encontrado(s)."
@@ -131,6 +145,7 @@ fun SimInspectorScreen() {
                                 InfoLine("Tecnologia de rede", sim.network)
                                 InfoLine("Dados móveis", sim.dataState)
                                 InfoLine("Em roaming", sim.roaming)
+                                InfoLine("Qualidade do sinal", sim.signal)
                             }
                         }
                     }
