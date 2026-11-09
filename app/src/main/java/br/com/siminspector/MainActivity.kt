@@ -70,7 +70,7 @@ fun SimInspectorScreen() {
                         else -> "Desconhecido"
                     },
                     operatorCode = perSim.networkOperator?.takeIf { it.isNotBlank() } ?: "Não fornecido",
-                    network = runCatching { TelephonyManager.getNetworkTypeName(perSim.dataNetworkType) }.getOrDefault("Indisponível"),
+                    network = networkTypeLabel(perSim.dataNetworkType),
                     dataState = when (perSim.dataState) {
                         TelephonyManager.DATA_CONNECTED -> "Conectado"
                         TelephonyManager.DATA_CONNECTING -> "Conectando"
@@ -164,4 +164,28 @@ private fun InfoLine(label: String, value: String) {
         Text(label, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
         Text(value, modifier = Modifier.weight(1.4f), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
+}
+
+private fun networkTypeLabel(type: Int): String = when (type) {
+    TelephonyManager.NETWORK_TYPE_GPRS -> "2G - GPRS"
+    TelephonyManager.NETWORK_TYPE_EDGE -> "2G - EDGE"
+    TelephonyManager.NETWORK_TYPE_CDMA -> "2G - CDMA"
+    TelephonyManager.NETWORK_TYPE_1xRTT -> "2G - 1xRTT"
+    TelephonyManager.NETWORK_TYPE_IDEN -> "2G - iDEN"
+    TelephonyManager.NETWORK_TYPE_GSM -> "2G - GSM"
+    TelephonyManager.NETWORK_TYPE_UMTS -> "3G - UMTS"
+    TelephonyManager.NETWORK_TYPE_EVDO_0 -> "3G - EVDO"
+    TelephonyManager.NETWORK_TYPE_EVDO_A -> "3G - EVDO"
+    TelephonyManager.NETWORK_TYPE_HSDPA -> "3G - HSDPA"
+    TelephonyManager.NETWORK_TYPE_HSUPA -> "3G - HSUPA"
+    TelephonyManager.NETWORK_TYPE_HSPA -> "3G - HSPA"
+    TelephonyManager.NETWORK_TYPE_EVDO_B -> "3G - EVDO B"
+    TelephonyManager.NETWORK_TYPE_EHRPD -> "3G - eHRPD"
+    TelephonyManager.NETWORK_TYPE_HSPAP -> "3G - HSPA+"
+    TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "3G - TD-SCDMA"
+    TelephonyManager.NETWORK_TYPE_LTE -> "4G - LTE"
+    TelephonyManager.NETWORK_TYPE_IWLAN -> "Wi-Fi (IWLAN)"
+    TelephonyManager.NETWORK_TYPE_NR -> "5G - NR"
+    TelephonyManager.NETWORK_TYPE_UNKNOWN -> "Desconhecida"
+    else -> "Não identificada (código $type)"
 }
