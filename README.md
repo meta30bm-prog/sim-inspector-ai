@@ -19,7 +19,7 @@ O Android restringe o acesso a dados sensíveis de telefonia. O número pode nã
 O aplicativo não coleta nem envia dados para servidores. As consultas são feitas localmente usando as APIs oficiais do Android.
 
 ## Gerar APK
-O GitHub Actions compila automaticamente após um push na branch `main`. Também é possível iniciar manualmente em **Actions → Android APK → Run workflow**.
+O GitHub Actions compila automaticamente após um push na branch `main` e em pull requests direcionados a ela. Também é possível iniciar manualmente em **Actions → Android APK → Run workflow**.
 
 Ao terminar com sucesso, abra a execução e baixe o artefato **sim-inspector-ai-debug**. O APK de depuração estará dentro do ZIP. O workflow verifica se o arquivo APK foi realmente gerado antes de publicá-lo.
 
