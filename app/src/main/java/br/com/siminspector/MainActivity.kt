@@ -2,6 +2,8 @@ package br.com.siminspector
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SubscriptionManager
@@ -36,6 +38,7 @@ class MainActivity : ComponentActivity() {
 fun SimInspectorScreen() {
     val context = LocalContext.current
     var cards by remember { mutableStateOf<List<SimCardInfo>>(emptyList()) }
+    var enteredNumbers by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var message by remember { mutableStateOf("Autorize o acesso ao telefone para consultar os dados disponíveis.") }
     var hasPermission by remember {
         mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
@@ -139,6 +142,48 @@ fun SimInspectorScreen() {
                                 Text(sim.slot, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 InfoLine("Operadora", sim.carrier)
                                 InfoLine("Número", sim.number)
+                                if (sim.carrier.contains("TIM", ignoreCase = true)) {
+                                    OutlinedButton(
+                                        onClick = {
+                                            runCatching {
+                                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                                    data = Uri.fromParts("tel", "*846#", null)
+                                                }
+                                                context.startActivity(intent)
+                                            }.onFailure {
+                                                message = "Não foi possível abrir o discador. Digite *846# manualmente no telefone."
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) { Text("Consultar número TIM (*846#)") }
+                                    Text(
+                                        "O discador será aberto. Selecione o chip TIM e toque em ligar. Depois, informe abaixo o número exibido pela operadora.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    OutlinedTextField(
+                                        value = enteredNumbers[sim.slot] ?: "",
+                                        onValueChange = { value -> enteredNumbers = enteredNumbers + (sim.slot to value) },
+                                        label = { Text("Número informado pela TIM") },
+                                        placeholder = { Text("(11) 99999-9999") },
+                                        singleLine = true,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Button(
+                                        onClick = {
+                                            val value = enteredNumbers[sim.slot]?.trim().orEmpty()
+                                            if (value.isNotBlank()) {
+                                                cards = cards.map { card ->
+                                                    if (card.slot == sim.slot) card.copy(number = value) else card
+                                                }
+                                                message = "Número atualizado para ${sim.slot} nesta consulta."
+                                            } else {
+                                                message = "Digite o número informado pela TIM."
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) { Text("Salvar número neste diagnóstico") }
+                                }
                                 InfoLine("País", sim.country)
                                 InfoLine("Estado do SIM", sim.state)
                                 InfoLine("Código da operadora (MCC/MNC)", sim.operatorCode)
