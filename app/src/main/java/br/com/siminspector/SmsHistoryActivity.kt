@@ -63,6 +63,13 @@ private fun SmsHistoryScreen(onBack: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var granted by remember { mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) }
     var items by remember { mutableStateOf(loadSms(context)) }
+    var contentFilter by remember { mutableStateOf("") }
+    val filteredItems = remember(items, contentFilter) {
+        val query = contentFilter.trim()
+        if (query.isEmpty()) items else items.filter {
+            it.body.contains(query, ignoreCase = true) || it.sender.contains(query, ignoreCase = true)
+        }
+    }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted = it }
     MaterialTheme {
         Scaffold(topBar = { TopAppBar(title = { Text("Histórico de SMS") }, navigationIcon = {
@@ -78,13 +85,34 @@ private fun SmsHistoryScreen(onBack: () -> Unit) {
                     Text("Recebimento autorizado", color = MaterialTheme.colorScheme.primary)
                     OutlinedButton(onClick = { items = loadSms(context) }, modifier = Modifier.fillMaxWidth()) { Text("Atualizar histórico") }
                 }
+                OutlinedTextField(
+                    value = contentFilter,
+                    onValueChange = { contentFilter = it },
+                    label = { Text("Filtrar pelo conteúdo") },
+                    placeholder = { Text("Digite uma palavra, trecho ou remetente") },
+                    singleLine = true,
+                    trailingIcon = {
+                        if (contentFilter.isNotEmpty()) {
+                            TextButton(onClick = { contentFilter = "" }) { Text("Limpar") }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    if (contentFilter.isBlank()) "${items.size} mensagem(ns) no histórico"
+                    else "${filteredItems.size} de ${items.size} mensagem(ns) encontrada(s)",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 OutlinedButton(onClick = {
                     context.getSharedPreferences(SMS_PREFS, Context.MODE_PRIVATE).edit().remove(SMS_ITEMS).apply()
                     items = emptyList()
+                    contentFilter = ""
                 }, modifier = Modifier.fillMaxWidth()) { Text("Apagar histórico") }
                 if (items.isEmpty()) Text("Nenhuma mensagem comum armazenada.")
+                else if (filteredItems.isEmpty()) Text("Nenhuma mensagem corresponde ao filtro.")
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(items.reversed()) { sms ->
+                    items(filteredItems.reversed()) { sms ->
                         ElevatedCard(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(sms.sender, style = MaterialTheme.typography.titleSmall)
