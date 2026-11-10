@@ -33,3 +33,11 @@ Ao terminar com sucesso, abra a execução e baixe o artefato **sim-inspector-ai
 - Android Gradle Plugin 8.7.3
 - Gradle 8.9
 - JDK 17
+
+## Portal Web — Estoque e catalogação
+
+A primeira versão do portal responsivo está em `web/`. Ela inclui dashboard, cadastro de chips, mapa da Caixa 01 (28 compartimentos, 40 posições por compartimento), busca por número, histórico e exportação CSV/JSON.
+
+Consulte [web/README.md](web/README.md) para executar e conhecer o estado da integração.
+
+**Importante:** esta entrega inicial salva dados no navegador e ainda não sincroniza com o Android. O aplicativo Android atual não possui backend/API compartilhado. A integração de produção exige a próxima etapa: API HTTPS, banco central, autenticação do administrador e cliente de sincronização Android. Não use o MVP local para dados operacionais sensíveis.

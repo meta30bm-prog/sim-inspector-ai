@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b31"><title>SIM Inspector AI | Estoque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-icon">SIM</div><div><strong>SIM Inspector AI</strong><small>Inventory workspace</small></div></div>
+  <div class="nav-label">GERENCIAMENTO</div>
+  <nav id="nav">
+    <button class="nav-item active" data-page="dashboard"><span>▦</span> Visão geral</button>
+    <button class="nav-item" data-page="chips"><span>▤</span> Todos os chips</button>
+    <button class="nav-item" data-page="boxes"><span>▦</span> Caixas e posições</button>
+    <button class="nav-item" data-page="search"><span>⌕</span> Localizar chip</button>
+    <button class="nav-item" data-page="moves"><span>⇄</span> Movimentações</button>
+    <button class="nav-item" data-page="reports"><span>▥</span> Relatórios</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="local-status"><i></i><div><b>Modo de demonstração</b><small>Dados salvos neste navegador</small></div></div><small class="version">Portal Web · MVP 0.1</small></div>
+</aside>
+<main class="main">
+<header class="topbar"><button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button><div><div class="eyebrow">SIM INSPECTOR AI / <span id="crumb">VISÃO GERAL</span></div><h1 id="pageTitle">Visão geral</h1></div><div class="top-actions"><span class="today" id="today"></span><div class="avatar">A</div></div></header>
+<div class="content" id="content"></div>
+<footer>SIM Inspector AI <span>•</span> Portal de estoque e identificação de chips</footer>
+</main>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><div class="eyebrow">CADASTRO</div><h2 id="modalTitle">Adicionar chip</h2></div><button class="icon-btn" id="closeModal" aria-label="Fechar">×</button></div><form id="chipForm"><input type="hidden" id="chipId"><div class="form-grid">
+<label>Número telefônico *<input id="phone" required placeholder="11987654321" inputmode="tel"></label>
+<label>Operadora<select id="operator"><option value="">Selecionar</option><option>Vivo</option><option>Claro</option><option>TIM</option><option>Algar</option><option>Outra</option></select></label>
+<label>Responsável<input id="owner" placeholder="Nome do responsável"></label>
+<label>ICCID (opcional)<input id="iccid" placeholder="Identificador do SIM"></label>
+<label>Estoque<select id="stock"><option value="nao_ativado">Chips não ativados</option><option value="ativado">Chips ativados</option><option value="utilizado">Chips utilizados</option></select></label>
+<label>Situação<select id="status"><option value="disponivel">Disponível</option><option value="em_uso">Em uso</option><option value="bloqueado">Bloqueado</option><option value="retirado">Retirado</option></select></label>
+<label>Caixa<select id="boxSelect"><option value="">Sem caixa</option></select></label>
+<label>Compartimento<select id="compSelect"><option value="">Sem compartimento</option></select></label>
+<label>Posição (01–40)<select id="positionSelect"><option value="">Não definida</option></select></label>
+<label class="full">Observações<textarea id="notes" rows="2" placeholder="Informações adicionais"></textarea></label>
+</div><div class="form-error" id="formError"></div><div class="modal-actions"><button type="button" class="btn secondary" id="cancelModal">Cancelar</button><button class="btn primary" type="submit">Salvar chip</button></div></form></section></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="./app.js"></script>
+</body></html>
