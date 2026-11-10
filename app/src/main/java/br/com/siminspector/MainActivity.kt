@@ -196,6 +196,12 @@ fun SimInspectorScreen() {
                     }
                 }
                 item {
+                    OutlinedButton(
+                        onClick = { context.startActivity(Intent(context, SmsHistoryActivity::class.java)) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text("Abrir histórico de SMS") }
+                }
+                item {
                     Text("Observação: o Android e a operadora podem ocultar o número e o ICCID por motivos de privacidade. O aplicativo não consegue descobrir dados que o sistema não fornece.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
