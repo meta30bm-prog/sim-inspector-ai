@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Telephony
@@ -65,14 +64,6 @@ private fun SmsHistoryScreen(onBack: () -> Unit) {
     var granted by remember { mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) }
     var items by remember { mutableStateOf(loadSms(context)) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted = it }
-    DisposableEffect(granted) {
-        val receiver = IncomingSmsReceiver()
-        if (granted) {
-            val filter = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-            ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
-        }
-        onDispose { runCatching { context.unregisterReceiver(receiver) } }
-    }
     MaterialTheme {
         Scaffold(topBar = { TopAppBar(title = { Text("Histórico de SMS") }, navigationIcon = {
             TextButton(onClick = onBack) { Text("Voltar") }
