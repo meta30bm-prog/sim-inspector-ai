@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <application android:allowBackup="true" android:label="SIM Inspector AI" android:supportsRtl="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+    <application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:label="SIM Inspector AI" android:supportsRtl="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <receiver android:name=".IncomingSmsReceiver" android:enabled="true" android:exported="true">
             <intent-filter android:priority="500">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
